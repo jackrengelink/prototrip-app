@@ -1,0 +1,16 @@
+# Self-hosting with Docker:  docker compose up -d
+# Then open http://localhost:3000 (put it behind HTTPS for phones – see docs/DEPLOYMENT.md).
+services:
+  prototrip:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
+      PUBLIC_URL: ${PUBLIC_URL:-}
+    volumes:
+      - prototrip-data:/data
+
+volumes:
+  prototrip-data:
