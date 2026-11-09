@@ -121,7 +121,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       setSession(next);
       setSnapshot(null);
       setLoading(true);
-      await refresh();
+      await refresh(true);
       return res.role;
     },
     [api, refresh],

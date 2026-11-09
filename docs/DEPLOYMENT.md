@@ -16,21 +16,17 @@ Render's free web services don't keep files between restarts, so the data goes i
 
 1. **Database:** create a free project at [neon.tech](https://neon.tech) (region: Frankfurt or Amsterdam). Copy the connection string; it looks like
    `postgresql://user:password@ep-xxx.eu-central-1.aws.neon.tech/neondb?sslmode=require`.
-2. **Web service:** at [render.com](https://render.com) choose *New → Web Service*, connect this GitHub repository and use:
-   - Runtime: **Node**
-   - Build command: `npm ci && npm run build`
-   - Start command: `npm start`
-   - Instance type: **Free**
-   - Environment variables:
-     - `NODE_ENV` = `production`
-     - `ADMIN_PASSWORD` = a long password only you know
-     - `DATABASE_URL` = the Neon connection string
-     - `PUBLIC_URL` = `https://<your-service>.onrender.com` (add after the first deploy)
-3. Deploy. Visit the URL and sign in with your admin password.
+2. **Web service – the easy way:** click the **Deploy to Render** button in the README (or open `https://render.com/deploy?repo=https://github.com/jackrengelink/prototrip-app`). Render reads [`render.yaml`](../render.yaml) and asks for:
+   - `ADMIN_PASSWORD` – a long password only you know,
+   - `DATABASE_URL` – the Neon connection string.
+3. **Web service – by hand** (same result): *New → Web Service*, connect this repository, Runtime **Node**, Build command `npm ci && npm run build`, Start command `npm start`, Instance type **Free**, and the environment variables `NODE_ENV=production`, `ADMIN_PASSWORD` and `DATABASE_URL`.
+4. After the first deploy, add `PUBLIC_URL` = `https://<your-service>.onrender.com` (used in calendar feeds and notifications) and sign in with your admin password.
+
+> ⚠️ Don't skip `DATABASE_URL` on the free plan: without it the data would live on Render's temporary disk and disappear on the next restart. The server log prints a warning when it stores files in production.
 
 Free Render services fall asleep after ~15 minutes without visitors; the first visit after that takes about 30 seconds. During the trip people use the app constantly, so that's rarely noticeable – and the app shows the cached schedule instantly while it wakes up.
 
-> **Prefer files on a disk?** The included [`render.yaml`](../render.yaml) Blueprint creates a paid *Starter* instance with a 1 GB disk at `/var/data`. Leave `DATABASE_URL` empty in that case.
+> **Prefer files on a disk instead of a database?** Use a paid *Starter* instance, add a disk (e.g. 1 GB mounted at `/var/data`) and set `DATA_DIR=/var/data` instead of `DATABASE_URL`.
 
 > **Supabase instead of Neon?** Use its connection string the same way. If you get a certificate error, also set `PGSSL_REJECT_UNAUTHORIZED=false`.
 

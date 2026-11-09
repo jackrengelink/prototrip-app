@@ -49,8 +49,19 @@ export function printWelcome(config: ServerConfig, boot: BootResult): void {
   else if (boot.generatedAdminPassword) {
     out.push(`  Admin password:    ${boot.generatedAdminPassword}`);
     out.push('                     ↑ write this down – it is only shown once.');
-    out.push('                     Change it in the app under Admin → Security.');
+    out.push('                     Change it in the app under Manage → Access & sharing.');
   } else out.push('  Admin password:    (set earlier – reset with "npm run reset-admin-password")');
   out.push(line, '');
   console.log(out.join('\n'));
+  if (config.isProduction && boot.db.store.kind === 'file') {
+    console.warn(
+      [
+        `⚠  Data is stored as files in ${config.dataDir}.`,
+        '   Make sure this folder is on a persistent disk/volume – on hosts like Render (free) or',
+        '   Heroku the filesystem is wiped on every restart. Otherwise set DATABASE_URL to a PostgreSQL',
+        '   database. See docs/DEPLOYMENT.md.',
+        '',
+      ].join('\n'),
+    );
+  }
 }

@@ -75,7 +75,11 @@ For development with hot reload use `npm run dev` and open <http://localhost:517
 
 ## Putting it online
 
-Phones need a real HTTPS address to install the app and get notifications, so host it somewhere. Step-by-step guides are in **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**:
+Phones need a real HTTPS address to install the app and get notifications, so host it somewhere. The quickest free route: create a free PostgreSQL database at [Neon](https://neon.tech), then
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/jackrengelink/prototrip-app)
+
+and fill in `ADMIN_PASSWORD` and `DATABASE_URL` (the Neon connection string) when asked. Step-by-step guides for all options are in **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**:
 
 | Option | Cost | Notes |
 | --- | --- | --- |
