@@ -1,0 +1,26 @@
+# Render Blueprint – see docs/DEPLOYMENT.md.
+# Free option: keep this file, set DATABASE_URL to a free PostgreSQL database (e.g. Neon).
+# Without DATABASE_URL, data is stored on the attached disk (needs a paid instance).
+services:
+  - type: web
+    name: prototrip
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATA_DIR
+        value: /var/data
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+    disk:
+      name: prototrip-data
+      mountPath: /var/data
+      sizeGB: 1
