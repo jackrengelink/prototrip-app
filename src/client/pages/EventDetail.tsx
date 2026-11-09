@@ -24,6 +24,7 @@ import { eventTiming, formatDuration, isHappeningNow, todayInTz } from '../../sh
 import { canEditRole, isOrganizerRole } from '../../shared/visibility';
 import { CategoryBubble, GroupChips, useNow } from '../components/domain';
 import { useFeedback } from '../components/feedback';
+import { HeadCountCard } from '../components/HeadCount';
 import { useDocumentTitle } from '../components/Layout';
 import { Avatar, Badge, Button, Card, EmptyState, IconButton, PageHeader } from '../components/ui';
 import { errorMessage } from '../lib/api';
@@ -279,6 +280,8 @@ export function EventDetailPage() {
           </ul>
         </Card>
       )}
+
+      {organizer && ev.audience === 'everyone' && ev.status !== 'cancelled' && <HeadCountCard ev={ev} />}
 
       {organizer && (
         <Card>

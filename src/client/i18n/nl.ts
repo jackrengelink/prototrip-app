@@ -57,6 +57,9 @@ export const nl: Record<TranslationKey, string> = {
   'login.joining': 'Bezig…',
   'login.hintLink': 'Link of QR-code gekregen? Open die gewoon, dan ben je meteen binnen.',
   'login.hintOrganizer': 'Organisatoren gebruiken hier hun organisatiecode. De beheerder gebruikt het beheerderswachtwoord.',
+  'login.sessionEnded': 'Je bent uitgelogd door de organisatie. Vul de reiscode opnieuw in.',
+  'login.showCode': 'Code tonen',
+  'login.hideCode': 'Code verbergen',
   'login.joinFailed': 'Deze link werkte niet. Vul de code zelf in.',
 
   'sync.offline': 'Offline – programma laatst bijgewerkt {time}',
@@ -103,6 +106,7 @@ export const nl: Record<TranslationKey, string> = {
   'home.contactOrganizers': 'Organisatie',
   'home.empty': 'Het programma wordt nog voorbereid. Kijk snel weer!',
   'home.pinned': 'Mededelingen',
+  'home.installHow': 'Hoe?',
   'home.minutes': '{n} min',
 
   'setup.title': 'Maak je reis klaar',
@@ -158,6 +162,16 @@ export const nl: Record<TranslationKey, string> = {
   'event.addTask': 'Taak toevoegen',
   'event.cancelledBanner': 'Deze activiteit is geannuleerd.',
   'event.tentativeBanner': 'Deze activiteit is nog niet definitief.',
+
+  'headcount.title': 'Aanwezigheid',
+  'headcount.start': 'Koppen tellen',
+  'headcount.continue': 'Verder tellen',
+  'headcount.reset': 'Opnieuw beginnen',
+  'headcount.resetConfirm': 'Alle vinkjes voor deze activiteit wissen?',
+  'headcount.missing': 'Nog niet hier ({n})',
+  'headcount.present': 'Aanwezig ({n})',
+  'headcount.allHere': 'Iedereen is er! 🎉',
+  'headcount.tapHint': 'Tik op een naam zodra je diegene ziet. Andere organisatoren zien de vinkjes ook.',
 
   'eventForm.newTitle': 'Nieuwe activiteit',
   'eventForm.editTitle': 'Activiteit bewerken',
@@ -273,6 +287,7 @@ export const nl: Record<TranslationKey, string> = {
   'info.contacts': 'Organisatie',
   'info.checklistNote': 'Je vinkjes worden op dit apparaat bewaard.',
   'info.resetChecklist': 'Alles uitvinken',
+  'info.reorder': 'Volgorde',
   'info.moveUp': 'Omhoog',
   'info.moveDown': 'Omlaag',
 

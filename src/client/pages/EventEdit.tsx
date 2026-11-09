@@ -8,7 +8,7 @@ import { canEditRole } from '../../shared/visibility';
 import { CategoryIcon } from '../components/domain';
 import { useFeedback } from '../components/feedback';
 import { useDocumentTitle } from '../components/Layout';
-import { Button, Chip, EmptyState, ErrorText, Field, IconButton, PageHeader, Segmented, Select, TextArea, TextInput, Toggle } from '../components/ui';
+import { Button, Chip, EmptyState, ErrorText, Field, IconButton, PageHeader, Segmented, Select, TextArea, TextInput, Toggle, useGoBack } from '../components/ui';
 import { zoneCity } from '../hooks';
 import { errorMessage } from '../lib/api';
 import { useData, useSnapshot } from '../state/data';
@@ -81,6 +81,7 @@ export function EventEditPage() {
   const { role, mutate } = useData();
   const { toast } = useFeedback();
   const navigate = useNavigate();
+  const goBack = useGoBack('/schedule');
   const existing = id ? snapshot.events.find((e) => e.id === id) : undefined;
   const copyOf = params.get('copy') ? snapshot.events.find((e) => e.id === params.get('copy')) : undefined;
   const isNew = !id;
@@ -365,7 +366,7 @@ export function EventEditPage() {
 
         <ErrorText>{error}</ErrorText>
         <div className="form-actions sticky">
-          <Button variant="ghost" onClick={() => navigate(-1)}>
+          <Button variant="ghost" onClick={goBack}>
             {t('common.cancel')}
           </Button>
           <Button type="submit" variant="primary" loading={busy}>

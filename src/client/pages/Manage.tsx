@@ -579,7 +579,7 @@ export function ManagePage() {
             <h2 className="card-title" id="trip">
               {t('manage.trip')}
             </h2>
-            <TripForm key={snapshot.version} settings={overview.settings} onSaved={load} />
+            <TripForm key={JSON.stringify(overview.settings)} settings={overview.settings} onSaved={load} />
           </Card>
           <Card className="manage-card">
             <h2 className="card-title" id="access">

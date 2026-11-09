@@ -262,6 +262,9 @@ export type PublicTrip = Omit<TripSettings, 'participantCode' | 'organizerCode'>
   organizerCode?: string;
 };
 
+/** Head count for one event: person id -> when they were marked present (and by whom). */
+export type EventCheckins = Record<string, { at: string; by?: string }>;
+
 /** Everything a signed-in device receives. Filtered on the server by role. */
 export interface Snapshot {
   version: number;
@@ -275,6 +278,8 @@ export interface Snapshot {
   people: PublicPerson[];
   groups: Group[];
   infoPages: InfoPage[];
+  /** Head counts per event id (organizers only). */
+  checkins: Record<string, EventCheckins>;
   calendarToken: string;
   pushPublicKey?: string;
   adminPasswordFromEnv?: boolean;

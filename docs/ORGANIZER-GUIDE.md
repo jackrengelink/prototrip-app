@@ -102,6 +102,7 @@ If a code ends up in the wrong hands: change it under Trip details and use **Sig
 - **Changes:** edit the event, type a *change note* ("Now leaving at 09:12 instead of 09:00") and switch on **Send a notification**. Everyone sees an *Updated* label and the note. Prefer *Status → Cancelled* over deleting, so people notice.
 - **News:** post an announcement (*Info*, *Important* or *Urgent*), pin it if it should stay on top, and send a notification.
 - **Tasks:** quick-add tasks on the Tasks tab, assign them to organizers and tick them off. *Mine* shows what's on your plate; the Today screen shows your open tasks too.
+- **Head count:** open the event (e.g. "Meet at the station") → *Start head count* and tap names as people arrive. Missing people are listed first with a call button. Every organizer sees the same ticks, so you can count with several people at once. It only lists the participants of the event's groups.
 - **Dietary overview:** People → *Dietary overview* gives the list for the restaurant.
 
 The app refreshes every 30 seconds while open and whenever it's brought back to the front. Without internet it shows the last version it downloaded (with an *Offline* label).

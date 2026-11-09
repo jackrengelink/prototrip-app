@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import type {
   Announcement,
+  EventCheckins,
   Group,
   InfoPage,
   Person,
@@ -31,6 +32,8 @@ export interface AppState {
   people: Person[];
   groups: Group[];
   infoPages: InfoPage[];
+  /** Head counts per event id. */
+  checkins: Record<string, EventCheckins>;
   secrets: {
     sessionSecret: string;
     adminPasswordHash: string | null;
@@ -170,6 +173,7 @@ export function createInitialState(vapid: { publicKey: string; privateKey: strin
     people: [],
     groups: [],
     infoPages: starterInfoPages(),
+    checkins: {},
     secrets: {
       sessionSecret: crypto.randomBytes(32).toString('base64url'),
       adminPasswordHash: null,
@@ -196,6 +200,7 @@ export function normalizeState(raw: unknown, vapid: () => { publicKey: string; p
     people: arr(s.people).map((p) => ({ ...p, groupIds: arr(p.groupIds) })),
     groups: arr(s.groups),
     infoPages: Array.isArray(s.infoPages) ? s.infoPages : starterInfoPages(),
+    checkins: s.checkins && typeof s.checkins === 'object' ? s.checkins : {},
     secrets: {
       sessionSecret: s.secrets?.sessionSecret || crypto.randomBytes(32).toString('base64url'),
       adminPasswordHash: s.secrets?.adminPasswordHash ?? null,

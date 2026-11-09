@@ -26,8 +26,10 @@ interface DataValue {
   lastSync: number | null;
   api: ApiClient;
   login(code: string): Promise<Role>;
-  logout(): void;
-  refresh(): Promise<void>;
+  /** Sign out on this device. 'expired' when the server ended the session (e.g. "sign out all devices"). */
+  logout(reason?: 'expired'): void;
+  /** Fetch the latest data. `fresh` waits for any request already running and fetches again. */
+  refresh(fresh?: boolean): Promise<void>;
   /** Run a change on the server and refresh the data afterwards. */
   mutate<T>(fn: (api: ApiClient) => Promise<T>): Promise<T>;
   meId: string | null;
@@ -55,7 +57,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const etagRef = useRef<string | null>(cached?.etag ?? null);
   const inFlight = useRef<Promise<void> | null>(null);
 
-  const logout = useCallback(() => {
+  const logout = useCallback((reason?: 'expired') => {
+    if (reason === 'expired' && sessionRef.current) writeJson('sessionEnded', true);
+    sessionRef.current = null;
     setSession(null);
     setSnapshot(null);
     setLastSync(null);
@@ -65,11 +69,16 @@ export function DataProvider({ children }: { children: ReactNode }) {
     removeKey('snapshot');
   }, []);
 
-  const api = useMemo(() => new ApiClient(() => sessionRef.current?.token ?? null, logout), [logout]);
+  const api = useMemo(() => new ApiClient(() => sessionRef.current?.token ?? null, () => logout('expired')), [logout]);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (fresh = false): Promise<void> => {
     if (!sessionRef.current) return;
-    if (inFlight.current) return inFlight.current;
+    if (inFlight.current) {
+      if (!fresh) return inFlight.current;
+      // A poll that started before a change was saved may return old data: wait, then fetch again.
+      await inFlight.current.catch(() => undefined);
+      return refresh(true);
+    }
     const run = (async () => {
       try {
         const res = await api.snapshot(etagRef.current);
@@ -98,6 +107,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     })();
     inFlight.current = run;
     return run;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api]);
 
   const login = useCallback(
@@ -120,7 +130,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const mutate = useCallback(
     async <T,>(fn: (api: ApiClient) => Promise<T>): Promise<T> => {
       const result = await fn(api);
-      await refresh();
+      await refresh(true);
       return result;
     },
     [api, refresh],

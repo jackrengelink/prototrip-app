@@ -329,3 +329,39 @@ describe('admin password stored in the database', () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe('head count', () => {
+  it('lets organizers tick people off and keeps it from participants', async () => {
+    const { as, db } = await setup();
+    const e = await as('admin').post('/api/events', { title: 'Meet at station', date: '2027-03-01', startTime: '08:00' });
+    const sam = await as('admin').post('/api/people', { name: 'Sam' });
+    const olly = await as('admin').post('/api/people', { name: 'Olly', role: 'organizer' });
+    expect((await as('participant').post(`/api/events/${e.body.id}/checkins`, { personId: sam.body.id, present: true })).status).toBe(403);
+    const res = await as('organizer').post(`/api/events/${e.body.id}/checkins`, { personId: sam.body.id, present: true, by: olly.body.id });
+    expect(res.status).toBe(200);
+    expect(db.state.checkins[e.body.id][sam.body.id].by).toBe(olly.body.id);
+    const oSnap = (await as('organizer').get('/api/data')).body as Snapshot;
+    expect(Object.keys(oSnap.checkins[e.body.id])).toEqual([sam.body.id]);
+    const pSnap = (await as('participant').get('/api/data')).body as Snapshot;
+    expect(pSnap.checkins).toEqual({});
+    await as('organizer').post(`/api/events/${e.body.id}/checkins`, { personId: sam.body.id, present: false });
+    expect(db.state.checkins[e.body.id]).toEqual({});
+    expect((await as('organizer').post(`/api/events/${e.body.id}/checkins`, { personId: 'ghost', present: true })).status).toBe(404);
+  });
+
+  it('cleans up when people or events are removed', async () => {
+    const { as, db } = await setup();
+    const e = await as('admin').post('/api/events', { title: 'x', date: '2027-03-01' });
+    const sam = await as('admin').post('/api/people', { name: 'Sam' });
+    const kim = await as('admin').post('/api/people', { name: 'Kim' });
+    await as('organizer').post(`/api/events/${e.body.id}/checkins`, { personId: sam.body.id, present: true });
+    await as('organizer').post(`/api/events/${e.body.id}/checkins`, { personId: kim.body.id, present: true });
+    await as('admin').del(`/api/people/${sam.body.id}`);
+    expect(Object.keys(db.state.checkins[e.body.id])).toEqual([kim.body.id]);
+    await as('organizer').del(`/api/events/${e.body.id}/checkins`);
+    expect(db.state.checkins[e.body.id]).toBeUndefined();
+    await as('organizer').post(`/api/events/${e.body.id}/checkins`, { personId: kim.body.id, present: true });
+    await as('admin').del(`/api/events/${e.body.id}`);
+    expect(db.state.checkins).toEqual({});
+  });
+});

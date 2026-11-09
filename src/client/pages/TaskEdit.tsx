@@ -5,7 +5,7 @@ import type { Priority } from '../../shared/schemas';
 import { isOrganizerRole } from '../../shared/visibility';
 import { useFeedback } from '../components/feedback';
 import { useDocumentTitle } from '../components/Layout';
-import { Button, Chip, EmptyState, ErrorText, Field, PageHeader, Segmented, Select, TextArea, TextInput, Toggle } from '../components/ui';
+import { Button, Chip, EmptyState, ErrorText, Field, PageHeader, Segmented, Select, TextArea, TextInput, Toggle, useGoBack } from '../components/ui';
 import { errorMessage } from '../lib/api';
 import { formatDayShort } from '../lib/format';
 import { toViews } from '../lib/schedule';
@@ -20,6 +20,7 @@ export function TaskEditPage() {
   const { role, mutate, meId, me } = useData();
   const { toast, confirm } = useFeedback();
   const navigate = useNavigate();
+  const goBack = useGoBack('/tasks');
   const existing = id ? snapshot.tasks.find((x) => x.id === id) : undefined;
   useDocumentTitle(existing ? existing.title : t('tasks.newTitle'));
 
@@ -61,7 +62,7 @@ export function TaskEditPage() {
     try {
       await mutate((api) => (existing ? api.put(`/tasks/${existing.id}`, payload) : api.post('/tasks', payload)));
       toast(t('common.saved'));
-      navigate(-1);
+      goBack();
     } catch (err) {
       setError(errorMessage(err, t('common.offline')));
       setBusy(false);
@@ -140,7 +141,7 @@ export function TaskEditPage() {
             </Button>
           )}
           <span className="grow" />
-          <Button variant="ghost" onClick={() => navigate(-1)}>
+          <Button variant="ghost" onClick={goBack}>
             {t('common.cancel')}
           </Button>
           <Button type="submit" variant="primary" loading={busy}>

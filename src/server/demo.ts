@@ -191,5 +191,5 @@ export function buildDemoContent(current: TripSettings, opts: { startOffsetDays?
     },
   ].map((p) => ({ ...p, id: newId('p_'), ...stamp })) as InfoPage[];
 
-  return { settings, events, tasks, announcements, people, groups, infoPages };
+  return { settings, events, tasks, announcements, people, groups, infoPages, checkins: {} };
 }

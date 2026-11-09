@@ -27,6 +27,7 @@ export function buildSnapshot(state: AppState, role: Role, opts: { adminPassword
     infoPages: state.infoPages
       .filter((p) => p.audience === 'everyone' || organizer)
       .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title)),
+    checkins: organizer ? state.checkins : {},
     calendarToken: calendarToken(state, role),
     pushPublicKey: state.push.publicKey,
     adminPasswordFromEnv: role === 'admin' ? !!opts.adminPasswordFromEnv : undefined,

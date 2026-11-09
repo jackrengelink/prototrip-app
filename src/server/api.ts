@@ -197,7 +197,7 @@ export function contentFromExport(raw: unknown, current: AppState, keepCodes: bo
     wrap(`Announcement ${i + 1}`, () => reviveEntity(announcementInputSchema, a, 'a_')),
   ) as Announcement[];
   const infoPages = list(data.infoPages).map((p, i) => wrap(`Info page ${i + 1}`, () => reviveEntity(infoPageInputSchema, p, 'p_'))) as InfoPage[];
-  const content = { settings, groups, people, events, tasks, announcements, infoPages };
+  const content = { settings, groups, people, events, tasks, announcements, infoPages, checkins: {} };
   const tmp = { ...current, ...content } as AppState;
   for (const ev of tmp.events) cleanRefs(tmp, ev);
   for (const t of tmp.tasks) cleanRefs(tmp, t);
@@ -381,6 +381,36 @@ export function createApiRouter(ctx: ApiContext): express.Router {
       findOr404(draft.events, id, 'Event');
       draft.events = draft.events.filter((e) => e.id !== id);
       for (const t of draft.tasks) if (t.eventId === id) t.eventId = undefined;
+      delete draft.checkins[id];
+    });
+    ok(res);
+  });
+
+  /* ---------------- head count (any organizer) ---------------- */
+
+  router.post('/events/:id/checkins', requireOrganizer, async (req, res) => {
+    const body = parse(
+      z.object({ personId: z.string().max(64), present: z.boolean(), by: z.string().max(64).optional().nullable() }),
+      req.body,
+    );
+    const id = String(req.params.id);
+    await db.mutate((draft) => {
+      findOr404(draft.events, id, 'Event');
+      findOr404(draft.people, body.personId, 'Person');
+      const list = { ...(draft.checkins[id] ?? {}) };
+      if (body.present) {
+        list[body.personId] = { at: nowIso(), by: body.by && draft.people.some((p) => p.id === body.by) ? body.by : undefined };
+      } else delete list[body.personId];
+      draft.checkins[id] = list;
+    });
+    ok(res);
+  });
+
+  router.delete('/events/:id/checkins', requireOrganizer, async (req, res) => {
+    const id = String(req.params.id);
+    await db.mutate((draft) => {
+      findOr404(draft.events, id, 'Event');
+      delete draft.checkins[id];
     });
     ok(res);
   });
@@ -405,6 +435,7 @@ export function createApiRouter(ctx: ApiContext): express.Router {
       const unknownPeople = new Set<string>();
       if (mode === 'replace') {
         draft.events = [];
+        draft.checkins = {};
         for (const t of draft.tasks) t.eventId = undefined;
       }
       for (const { input, groupNames, assigneeNames } of parsed) {
@@ -566,6 +597,7 @@ export function createApiRouter(ctx: ApiContext): express.Router {
         if (t.doneBy === id) t.doneBy = undefined;
       }
       for (const s of draft.push.subscriptions) if (s.personId === id) s.personId = undefined;
+      for (const list of Object.values(draft.checkins)) delete list[id];
     });
     ok(res);
   });
@@ -591,6 +623,7 @@ export function createApiRouter(ctx: ApiContext): express.Router {
       const createdGroups: string[] = [];
       if (mode === 'replace') {
         draft.people = [];
+        draft.checkins = {};
         for (const e of draft.events) e.assigneeIds = [];
         for (const t of draft.tasks) {
           t.assigneeIds = [];
@@ -831,6 +864,7 @@ export function createApiRouter(ctx: ApiContext): express.Router {
   router.post('/admin/reset', requireAdmin, async (req, res) => {
     const scope = parse(z.object({ scope: z.enum(['schedule', 'everything']) }), req.body).scope;
     const next = structuredClone(db.state) as AppState;
+    next.checkins = {};
     if (scope === 'schedule') {
       next.events = [];
       next.tasks = [];
@@ -873,6 +907,7 @@ export function createApiRouter(ctx: ApiContext): express.Router {
       people: restored.people,
       groups: restored.groups,
       infoPages: restored.infoPages,
+      checkins: restored.checkins,
     });
     await db.replace(next, 'restore');
     ok(res);

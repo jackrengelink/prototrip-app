@@ -6,7 +6,7 @@ import { canEditRole, isOrganizerRole } from '../../shared/visibility';
 import { GroupChips } from '../components/domain';
 import { useFeedback } from '../components/feedback';
 import { useDocumentTitle } from '../components/Layout';
-import { Avatar, Badge, Button, Card, Chip, EmptyState, ErrorText, Field, IconButton, Modal, PageHeader, Section, Segmented, TextArea, TextInput } from '../components/ui';
+import { Avatar, Badge, Button, Card, Chip, EmptyState, ErrorText, Field, IconButton, Modal, PageHeader, Section, Segmented, TextArea, TextInput, useGoBack } from '../components/ui';
 import { errorMessage } from '../lib/api';
 import { telHref, whatsappHref } from '../lib/format';
 import { normalizeText } from '../lib/schedule';
@@ -129,7 +129,7 @@ function GroupEditor({ group, open, onClose }: { group?: Group; open: boolean; o
     <Modal open={open} onClose={onClose} title={group ? t('people.editGroup') : t('people.addGroup')}>
       <form className="form" onSubmit={submit}>
         <Field label={t('people.groupName')} htmlFor="group-name">
-          <TextInput id="group-name" value={name} onChange={(e) => setName(e.target.value)} required maxLength={60} />
+          <TextInput id="group-name" value={name} onChange={(e) => setName(e.target.value)} required maxLength={60} data-autofocus />
         </Field>
         <Field label={t('people.groupColor')}>
           <div className="color-row">
@@ -321,6 +321,7 @@ export function PersonEditPage() {
   const { role, mutate } = useData();
   const { toast, confirm } = useFeedback();
   const navigate = useNavigate();
+  const goBack = useGoBack('/people');
   const existing = id ? snapshot.people.find((p) => p.id === id) : undefined;
   useDocumentTitle(existing ? t('people.edit') : t('people.add'));
   const [name, setName] = useState(existing?.name ?? '');
@@ -440,7 +441,7 @@ export function PersonEditPage() {
             </Button>
           )}
           <span className="grow" />
-          <Button variant="ghost" onClick={() => navigate(-1)}>
+          <Button variant="ghost" onClick={goBack}>
             {t('common.cancel')}
           </Button>
           <Button type="submit" variant="primary" loading={busy}>

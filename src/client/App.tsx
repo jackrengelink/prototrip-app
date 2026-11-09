@@ -54,7 +54,7 @@ function SignedInApp() {
               <Button variant="primary" onClick={() => void refresh()}>
                 {t('common.retry')}
               </Button>
-              <Button variant="ghost" onClick={logout}>
+              <Button variant="ghost" onClick={() => logout()}>
                 {t('me.signOut')}
               </Button>
             </>

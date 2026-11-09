@@ -664,6 +664,29 @@ hr {
 }
 .input-icon .input {
   padding-left: 40px;
+  padding-right: 48px;
+}
+.input-icon svg.lucide-key-round {
+  pointer-events: none;
+}
+.input-eye {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 999px;
+}
+.input-eye svg {
+  position: static;
+  transform: none;
 }
 .input-with-button {
   display: flex;
@@ -1054,6 +1077,9 @@ hr {
   box-shadow: var(--shadow-lg);
   animation: rise 0.2s ease-out;
   padding-bottom: var(--safe-bottom);
+}
+.modal:focus {
+  outline: none;
 }
 .modal-wide {
   max-width: 720px;
@@ -1526,6 +1552,9 @@ hr {
 .welcome-card,
 .setup-card {
   margin-bottom: 12px;
+}
+.install-card .icon-btn {
+  margin: -8px -8px -8px 0;
 }
 .identity-card {
   display: flex;
@@ -2128,6 +2157,60 @@ hr {
   flex-wrap: wrap;
   gap: 8px;
   margin: 16px 0 10px;
+}
+
+/* ---------- head count ---------- */
+.headcount-number {
+  font-size: 1.3rem;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.headcount-number.all {
+  color: var(--success);
+}
+.headcount-heading {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin: 14px 0 6px;
+}
+.headcount-heading.missing {
+  color: var(--warn);
+}
+.headcount-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.headcount-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.headcount-list li + li {
+  border-top: 1px solid var(--border);
+}
+.headcount-item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: none;
+  text-align: left;
+  padding: 6px 4px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+.headcount-item:hover {
+  background: var(--accent-softer);
+}
+.headcount-list .is-present strong {
+  color: var(--muted);
 }
 
 /* ---------- markdown ---------- */

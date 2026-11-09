@@ -36,7 +36,7 @@ export function PersonPicker({ open, onClose }: { open: boolean; onClose(): void
         <>
           <div className="search-box">
             <Search size={18} aria-hidden />
-            <TextInput value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('picker.search')} aria-label={t('picker.search')} autoFocus />
+            <TextInput value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('picker.search')} aria-label={t('picker.search')} />
           </div>
           <ul className="picker-list">
             {people.map((p) => (

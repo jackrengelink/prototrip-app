@@ -6,7 +6,7 @@ import { canEditRole } from '../../shared/visibility';
 import { useNow } from '../components/domain';
 import { useFeedback } from '../components/feedback';
 import { useDocumentTitle, useShell } from '../components/Layout';
-import { Badge, Button, EmptyState, ErrorText, Field, IconButton, PageHeader, Segmented, TextArea, TextInput, Toggle } from '../components/ui';
+import { Badge, Button, EmptyState, ErrorText, Field, IconButton, PageHeader, Segmented, TextArea, TextInput, Toggle, useGoBack } from '../components/ui';
 import { errorMessage } from '../lib/api';
 import { formatDateTime, formatRelative } from '../lib/format';
 import { Markdown } from '../lib/markdown';
@@ -119,6 +119,7 @@ export function AnnouncementEditPage() {
   const { role, mutate, me } = useData();
   const { toast } = useFeedback();
   const navigate = useNavigate();
+  const goBack = useGoBack('/news');
   const existing = id ? snapshot.announcements.find((a) => a.id === id) : undefined;
   useDocumentTitle(existing ? t('news.edit') : t('news.new'));
 
@@ -203,7 +204,7 @@ export function AnnouncementEditPage() {
         </div>
         <ErrorText>{error}</ErrorText>
         <div className="form-actions sticky">
-          <Button variant="ghost" onClick={() => navigate(-1)}>
+          <Button variant="ghost" onClick={goBack}>
             {t('common.cancel')}
           </Button>
           <Button type="submit" variant="primary" loading={busy}>

@@ -12,6 +12,7 @@ import {
 import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { initials } from '../lib/format';
+import { useT } from '../state/prefs';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'subtle';
 
@@ -104,18 +105,29 @@ export function Section({ title, actions, children, className, id }: { title?: R
   );
 }
 
+/** Go back inside the app, or to `fallback` when this page was opened directly (e.g. from a link). */
+export function useGoBack(fallback = '/') {
+  const navigate = useNavigate();
+  return () => {
+    const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
+    if (idx > 0) navigate(-1);
+    else navigate(fallback, { replace: true });
+  };
+}
+
 export function PageHeader({ title, subtitle, back, actions }: { title: ReactNode; subtitle?: ReactNode; back?: string | boolean; actions?: ReactNode }) {
   const navigate = useNavigate();
+  const goBack = useGoBack('/');
+  const t = useT();
   return (
     <header className="page-header">
       {back && (
         <IconButton
-          label="Back"
+          label={t('common.back')}
           icon={<ArrowLeft size={22} />}
           onClick={() => {
             if (typeof back === 'string') navigate(back);
-            else if (window.history.length > 1) navigate(-1);
-            else navigate('/');
+            else goBack();
           }}
         />
       )}
@@ -257,6 +269,7 @@ export function Avatar({ name, color, size = 36 }: { name: string; color?: strin
 
 export function Modal({ open, onClose, title, children, footer, wide }: { open: boolean; onClose(): void; title?: ReactNode; children: ReactNode; footer?: ReactNode; wide?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
+  const t = useT();
   useEffect(() => {
     if (!open) return;
     const prev = document.activeElement as HTMLElement | null;
@@ -265,9 +278,11 @@ export function Modal({ open, onClose, title, children, footer, wide }: { open: 
     };
     document.addEventListener('keydown', onKey);
     document.body.classList.add('modal-open');
+    // Focus the dialog itself (so screen readers and Escape work) unless a field asks for focus;
+    // focusing a text field on a phone would pop up the keyboard over the content.
     window.setTimeout(() => {
-      const first = ref.current?.querySelector<HTMLElement>('input, textarea, select, button:not(.modal-close)');
-      (first ?? ref.current)?.focus();
+      const wanted = ref.current?.querySelector<HTMLElement>('[data-autofocus]');
+      (wanted ?? ref.current)?.focus({ preventScroll: true });
     }, 30);
     return () => {
       document.removeEventListener('keydown', onKey);
@@ -279,12 +294,10 @@ export function Modal({ open, onClose, title, children, footer, wide }: { open: 
   return createPortal(
     <div className="modal-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div className={`modal${wide ? ' modal-wide' : ''}`} role="dialog" aria-modal="true" ref={ref} tabIndex={-1}>
-        {(title || true) && (
-          <div className="modal-head">
-            <h2>{title}</h2>
-            <IconButton className="modal-close" label="Close" icon={<X size={20} />} onClick={onClose} />
-          </div>
-        )}
+        <div className="modal-head">
+          <h2>{title}</h2>
+          <IconButton className="modal-close" label={t('common.close')} icon={<X size={20} />} onClick={onClose} />
+        </div>
         <div className="modal-body">{children}</div>
         {footer && <div className="modal-foot">{footer}</div>}
       </div>

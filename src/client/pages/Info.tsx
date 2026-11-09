@@ -1,11 +1,11 @@
-import { ArrowDown, ArrowUp, ChevronRight, Lock, Pencil, Phone, Plus, RotateCcw, Siren, Trash2, Users } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronRight, Lock, Pencil, Phone, Plus, RotateCcw, Siren, Trash2, Users } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { Audience } from '../../shared/schemas';
 import { canEditRole } from '../../shared/visibility';
 import { useFeedback } from '../components/feedback';
 import { useDocumentTitle } from '../components/Layout';
-import { Avatar, Button, Card, EmptyState, ErrorText, Field, IconButton, PageHeader, Section, Segmented, TextArea, TextInput } from '../components/ui';
+import { Avatar, Button, Card, EmptyState, ErrorText, Field, IconButton, PageHeader, Section, Segmented, TextArea, TextInput, useGoBack } from '../components/ui';
 import { errorMessage } from '../lib/api';
 import { telHref } from '../lib/format';
 import { countChecklistItems, Markdown, useChecklist } from '../lib/markdown';
@@ -42,7 +42,11 @@ export function InfoPage() {
         actions={
           canEdit && (
             <>
-              {pages.length > 1 && <Button size="sm" variant={reordering ? 'primary' : 'ghost'} onClick={() => setReordering((r) => !r)}>{reordering ? t('common.done') : <ArrowDown size={16} />}</Button>}
+              {pages.length > 1 && (
+                <Button size="sm" variant={reordering ? 'primary' : 'ghost'} icon={reordering ? undefined : <ArrowUpDown size={16} />} onClick={() => setReordering((r) => !r)}>
+                  {reordering ? t('common.done') : t('info.reorder')}
+                </Button>
+              )}
               <IconButton label={t('info.newPage')} icon={<Plus size={22} />} to="/info/new" />
             </>
           )
@@ -176,6 +180,7 @@ export function InfoEditPage() {
   const { role, mutate } = useData();
   const { toast, confirm } = useFeedback();
   const navigate = useNavigate();
+  const goBack = useGoBack('/info');
   const existing = id ? snapshot.infoPages.find((p) => p.id === id) : undefined;
   useDocumentTitle(existing ? t('info.editPage') : t('info.newPage'));
   const [title, setTitle] = useState(existing?.title ?? '');
@@ -279,7 +284,7 @@ export function InfoEditPage() {
             </Button>
           )}
           <span className="grow" />
-          <Button variant="ghost" onClick={() => navigate(-1)}>
+          <Button variant="ghost" onClick={goBack}>
             {t('common.cancel')}
           </Button>
           <Button type="submit" variant="primary" loading={busy}>

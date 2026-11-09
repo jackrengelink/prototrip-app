@@ -55,6 +55,9 @@ export const en = {
   'login.joining': 'Joining…',
   'login.hintLink': 'Got a link or QR code? Just open it and you’re in.',
   'login.hintOrganizer': 'Organizers use their organizer code here. The trip admin uses the admin password.',
+  'login.sessionEnded': 'You were signed out by the organizers. Enter the trip code again.',
+  'login.showCode': 'Show code',
+  'login.hideCode': 'Hide code',
   'login.joinFailed': 'This link did not work. Enter the code yourself.',
 
   'sync.offline': 'Offline – schedule last updated {time}',
@@ -101,6 +104,7 @@ export const en = {
   'home.contactOrganizers': 'Organizers',
   'home.empty': 'The schedule is still being prepared. Check back soon!',
   'home.pinned': 'Announcements',
+  'home.installHow': 'How?',
   'home.minutes': '{n} min',
 
   'setup.title': 'Get your trip ready',
@@ -156,6 +160,16 @@ export const en = {
   'event.addTask': 'Add task',
   'event.cancelledBanner': 'This event has been cancelled.',
   'event.tentativeBanner': 'This event is not final yet.',
+
+  'headcount.title': 'Head count',
+  'headcount.start': 'Start head count',
+  'headcount.continue': 'Continue head count',
+  'headcount.reset': 'Start over',
+  'headcount.resetConfirm': 'Clear all ticks for this event?',
+  'headcount.missing': 'Not here yet ({n})',
+  'headcount.present': 'Present ({n})',
+  'headcount.allHere': 'Everyone is here! 🎉',
+  'headcount.tapHint': 'Tap a name when you see that person. Other organizers see the ticks too.',
 
   'eventForm.newTitle': 'New event',
   'eventForm.editTitle': 'Edit event',
@@ -271,6 +285,7 @@ export const en = {
   'info.contacts': 'Organizers',
   'info.checklistNote': 'Your ticks are saved on this device.',
   'info.resetChecklist': 'Untick all',
+  'info.reorder': 'Reorder',
   'info.moveUp': 'Move up',
   'info.moveDown': 'Move down',
 

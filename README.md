@@ -15,6 +15,13 @@ It is a fast, installable web app (PWA): open the link, enter the trip code, and
 
 ---
 
+<p>
+  <img src="docs/screenshots/organizer-headcount.png" width="200" alt="Head count for organizers">
+  <img src="docs/screenshots/organizer-tasks.png" width="200" alt="Organizer tasks">
+  <img src="docs/screenshots/admin-import.png" width="200" alt="Spreadsheet import">
+  <img src="docs/screenshots/dark-today.png" width="200" alt="Dark mode">
+</p>
+
 ## What's in it
 
 ### For everyone on the trip
@@ -33,6 +40,7 @@ It is a fast, installable web app (PWA): open the link, enter the trip code, and
 - A **separate organizer schedule**: any item can be *Everyone* or *Organizers only*. Organizers see both, with a switch between *Everything / Participants / Organizers* to check exactly what participants see.
 - **Private organizer notes** on every event (booking references, supplier phone numbers…) – never sent to participants' phones.
 - **Tasks**: a shared to-do list with assignees, due dates, priorities, links to events, *Mine / Open / Done* views and progress.
+- **Head count** at any event: tap names as people arrive, see who's missing (with a call button) – shared between all organizers' phones (updates every few seconds).
 - **Groups** (Group A/B, rooms, buses…) so different people can have different programmes.
 - People list with dietary needs, emergency contacts and notes (organizers only) and a dietary overview for restaurants.
 

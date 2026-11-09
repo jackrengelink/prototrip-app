@@ -1,8 +1,9 @@
-import { ArrowRight, KeyRound } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, KeyRound } from 'lucide-react';
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, ErrorText, Field, Spinner, TextInput } from '../components/ui';
 import { ApiError, errorMessage } from '../lib/api';
+import { readJson, removeKey } from '../lib/storage';
 import { useData } from '../state/data';
 import { type Lang, usePrefs } from '../state/prefs';
 
@@ -50,7 +51,15 @@ export function LoginPage({ initialError }: { initialError?: string }) {
   const info = usePublicInfo();
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(initialError ?? null);
+  const [error, setError] = useState<string | null>(() => {
+    if (initialError) return initialError;
+    if (readJson<boolean>('sessionEnded', false)) {
+      removeKey('sessionEnded');
+      return t('login.sessionEnded');
+    }
+    return null;
+  });
+  const [showCode, setShowCode] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const submit = async (e: FormEvent) => {
@@ -96,10 +105,19 @@ export function LoginPage({ initialError }: { initialError?: string }) {
                 autoCapitalize="characters"
                 autoCorrect="off"
                 spellCheck={false}
-                type="password"
+                type={showCode ? 'text' : 'password'}
                 inputMode="text"
                 enterKeyHint="go"
               />
+              <button
+                type="button"
+                className="input-eye"
+                onClick={() => setShowCode((v) => !v)}
+                aria-label={showCode ? t('login.hideCode') : t('login.showCode')}
+                aria-pressed={showCode}
+              >
+                {showCode ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </Field>
           <ErrorText>{error}</ErrorText>
@@ -130,7 +148,7 @@ export function JoinPage() {
       navigate('/', { replace: true });
       return;
     }
-    login(decodeURIComponent(code))
+    login(code)
       .then(() => navigate('/', { replace: true }))
       .catch((err) => setFailed(err instanceof ApiError ? t('login.joinFailed') : errorMessage(err, t('common.offline'))));
   }, [code, login, navigate, t]);

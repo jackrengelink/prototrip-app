@@ -10,10 +10,11 @@ import {
   Navigation,
   Phone,
   Siren,
+  Smartphone,
   UserRound,
   X,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { categoryMeta } from '../../shared/categories';
 import type { Announcement, Snapshot } from '../../shared/schemas';
@@ -27,6 +28,8 @@ import { deviceTimeZone, useBuckets, useMyViews, zoneCity } from '../hooks';
 import { eventTimeText, formatDateRange, formatDayLong, formatRelative, mapsUrl, telHref } from '../lib/format';
 import { Markdown } from '../lib/markdown';
 import { type EventView, nowAndNext } from '../lib/schedule';
+import { canPromptInstall, onInstallChange, promptInstall } from '../lib/install';
+import { isIos, isStandalone } from '../lib/push';
 import { readJson, writeJson } from '../lib/storage';
 import { useData, useSnapshot } from '../state/data';
 import { usePrefs, useT } from '../state/prefs';
@@ -66,7 +69,7 @@ function SetupChecklist({ snapshot }: { snapshot: Snapshot }) {
   const [hidden, setHidden] = useState(() => readJson<boolean>('setupHidden', false));
   if (hidden || snapshot.role !== 'admin') return null;
   const steps = [
-    { done: !!snapshot.trip.startDate && snapshot.trip.name !== 'ProtoTrip', label: t('setup.details'), to: '/manage#trip' },
+    { done: !!snapshot.trip.startDate && !!snapshot.trip.endDate, label: t('setup.details'), to: '/manage#trip' },
     { done: snapshot.events.length > 0, label: t('setup.schedule'), to: '/manage#import' },
     { done: snapshot.people.length > 0, label: t('setup.people'), to: '/people' },
     { done: false, label: t('setup.info'), to: '/info' },
@@ -104,6 +107,41 @@ function SetupChecklist({ snapshot }: { snapshot: Snapshot }) {
           <Link to="/manage#danger">{t('setup.demo')}</Link>
         </p>
       )}
+    </Card>
+  );
+}
+
+function InstallNudge() {
+  const t = useT();
+  const [hidden, setHidden] = useState(() => readJson<boolean>('installHidden', false) || isStandalone());
+  const [canInstall, setCanInstall] = useState(canPromptInstall());
+  useEffect(() => onInstallChange(() => setCanInstall(canPromptInstall())), []);
+  if (hidden) return null;
+  const hide = () => {
+    writeJson('installHidden', true);
+    setHidden(true);
+  };
+  return (
+    <Card className="identity-card install-card">
+      <Smartphone size={24} className="accent" />
+      <div className="grow">
+        <strong>{t('me.install')}</strong>
+        <p className="muted small">{isIos() ? t('me.installIos') : t('me.installText')}</p>
+      </div>
+      {canInstall ? (
+        <Button size="sm" variant="primary" onClick={() => void promptInstall().then((ok) => ok && hide())}>
+          {t('me.installButton')}
+        </Button>
+      ) : (
+        !isIos() && (
+          <Button size="sm" variant="ghost" to="/me">
+            {t('home.installHow')}
+          </Button>
+        )
+      )}
+      <button type="button" className="icon-btn" aria-label={t('setup.dismiss')} onClick={hide}>
+        <X size={18} />
+      </button>
     </Card>
   );
 }
@@ -318,6 +356,8 @@ export function HomePage() {
           </Button>
         </Card>
       )}
+
+      <InstallNudge />
 
       <AnnouncementPreview items={highlights} />
 

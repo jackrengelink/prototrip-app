@@ -235,6 +235,21 @@ try {
     await orga.page.waitForSelector('.task-row.done:has-text("Buy water")');
   });
 
+  step('organizer does a head count that participants cannot see');
+  await orga.page.goto(`${base}/schedule?day=all`);
+  await orga.page.click('.segmented button:has-text("Everything")');
+  await orga.page.click('text=Team Red dinner');
+  await orga.page.click('text=Start head count');
+  await orga.page.click('.headcount-item:has-text("Pim Participant")');
+  await orga.page.waitForSelector('.headcount-list .is-present:has-text("Pim Participant")');
+  await orga.page.waitForSelector('text=Everyone is here!');
+  await shot(orga.page, 'e2e-organizer-headcount');
+  await orga.page.keyboard.press('Escape');
+  await part.page.goto(`${base}/schedule?day=all`);
+  await part.page.click('text=Team Red dinner');
+  await part.page.waitForSelector('h1:has-text("Team Red dinner")');
+  assert((await part.page.locator('text=Head count').count()) === 0, 'participants have no head count');
+
   step('changes show up for participants after a refresh');
   await admin.page.goto(`${base}/schedule?day=all`);
   await admin.page.click('text=Workshop for everyone');
