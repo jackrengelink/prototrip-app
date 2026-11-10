@@ -19,7 +19,7 @@ Render's free web services don't keep files between restarts, so the data goes i
 2. **Web service – the easy way:** click the **Deploy to Render** button in the README (or open `https://render.com/deploy?repo=https://github.com/jackrengelink/prototrip-app`). Render reads [`render.yaml`](../render.yaml) and asks for:
    - `ADMIN_PASSWORD` – a long password only you know,
    - `DATABASE_URL` – the Neon connection string.
-3. **Web service – by hand** (same result): *New → Web Service*, connect this repository, Runtime **Node**, Build command `npm ci && npm run build`, Start command `npm start`, Instance type **Free**, and the environment variables `NODE_ENV=production`, `ADMIN_PASSWORD` and `DATABASE_URL`.
+3. **Web service – by hand** (same result): *New → Web Service*, connect this repository, Runtime **Node**, Build command `npm ci --include=dev && npm run build`, Start command `npm start`, Instance type **Free**, and the environment variables `NODE_ENV=production`, `ADMIN_PASSWORD` and `DATABASE_URL`.
 4. After the first deploy, add `PUBLIC_URL` = `https://<your-service>.onrender.com` (used in calendar feeds and notifications) and sign in with your admin password.
 
 > ⚠️ Don't skip `DATABASE_URL` on the free plan: without it the data would live on Render's temporary disk and disappear on the next restart. The server log prints a warning when it stores files in production.
