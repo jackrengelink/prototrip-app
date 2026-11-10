@@ -4,7 +4,7 @@
 # See docs/DEPLOYMENT.md for details and for the paid "disk" alternative.
 services:
   - type: web
-    name: prototrip
+    name: prototrip-schedule
     runtime: node
     plan: free
     region: frankfurt
